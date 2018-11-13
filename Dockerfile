@@ -25,31 +25,41 @@ ENV LC_ALL en_US.UTF-8
 ENV LC_CTYPE en_US.UTF-8
 ENV LC_MESSAGES en_US.UTF-8
 
-RUN set -ex \
-    && buildDeps=' \
+RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
+  && curl https://packages.microsoft.com/config/debian/9/prod.list > /etc/apt/sources.list.d/mssql-release.list \
+  && apt-get update \
+  && ACCEPT_EULA=Y apt-get -y install msodbcsql17 \
+  && ACCEPT_EULA=Y apt-get -y install mssql-tools
+
+ENV PATH="/opt/mssql-tools/bin:${PATH}"
+
+RUN apt-get update -yqq \
+    && apt-get upgrade -yqq \
+    && apt-get install -y \
+        apt-transport-https \
+        apt-utils \
+        build-essential \
+        curl \
+        default-libmysqlclient-dev \
+        freetds-bin \
         freetds-dev \
-        python3-dev \
+        git \
+        libblas-dev \
+        libffi-dev \
         libkrb5-dev \
+        liblapack-dev \
+        libpq-dev \
         libsasl2-dev \
         libssl-dev \
-        libffi-dev \
-        libpq-dev \
-        git \
-    ' \
-    && apt-get update -yqq \
-    && apt-get upgrade -yqq \
-    && apt-get install -yqq --no-install-recommends \
-        $buildDeps \
-        freetds-bin \
-        build-essential \
+        locales \
+        netcat \
+        python3-dev \
         python3-pip \
         python3-requests \
-        default-libmysqlclient-dev \
-        apt-utils \
-        curl \
         rsync \
-        netcat \
-        locales \
+        software-properties-common \
+        sudo \
+        vim \
     && sed -i 's/^# en_US.UTF-8 UTF-8$/en_US.UTF-8 UTF-8/g' /etc/locale.gen \
     && locale-gen \
     && update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 \
@@ -59,6 +69,11 @@ RUN set -ex \
     && pip install pyOpenSSL \
     && pip install ndg-httpsclient \
     && pip install pyasn1 \
+    && pip install docker \
+    && pip install bcrypt \
+    && pip install flask-bcrypt \
+    && pip install pyodbc \
+    && pip install pymssql \
     && pip install apache-airflow[crypto,celery,postgres,hive,jdbc,mysql,ssh${AIRFLOW_DEPS:+,}${AIRFLOW_DEPS}]==${AIRFLOW_VERSION} \
     && pip install 'celery[redis]>=4.1.1,<4.2.0' \
     && if [ -n "${PYTHON_DEPS}" ]; then pip install ${PYTHON_DEPS}; fi \

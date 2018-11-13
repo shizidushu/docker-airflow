@@ -1,0 +1,12 @@
+sudo: true
+dist: trusty
+
+jobs:
+  include:
+    - stage: build docker image
+      script:
+      - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+      - docker build --build-arg GITHUB_PAT=$GITHUB_ACCESS_TOKEN -t docker-airflow .
+      - docker images
+      - docker tag docker-airflow $DOCKER_USERNAME/docker-airflow
+      - docker push $DOCKER_USERNAME/docker-airflow
