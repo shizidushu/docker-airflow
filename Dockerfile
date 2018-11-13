@@ -92,8 +92,10 @@ RUN apt-get update -yqq \
 COPY script/entrypoint.sh /entrypoint.sh
 COPY config/airflow.cfg ${AIRFLOW_HOME}/airflow.cfg
 
-RUN groupadd --gid 119 docker \
-  && usermod -aG docker airflow
+# Add user to the group docker. It seems needed when run docker user other than root.
+# not sure about root. but comment it for guessing so.
+# RUN groupadd --gid 119 docker \
+#  && usermod -aG docker airflow
 
 RUN chown -R airflow: ${AIRFLOW_HOME}
 
