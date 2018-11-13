@@ -92,6 +92,9 @@ RUN apt-get update -yqq \
 COPY script/entrypoint.sh /entrypoint.sh
 COPY config/airflow.cfg ${AIRFLOW_HOME}/airflow.cfg
 
+RUN groupadd --gid 119 docker \
+  && usermod -aG docker airflow
+
 RUN chown -R airflow: ${AIRFLOW_HOME}
 
 EXPOSE 8080 5555 8793
