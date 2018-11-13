@@ -48,6 +48,7 @@ RUN apt-get update -yqq \
         libffi-dev \
         libkrb5-dev \
         liblapack-dev \
+        libltdl7 \
         libpq-dev \
         libsasl2-dev \
         libssl-dev \
