@@ -25,12 +25,7 @@ ENV LC_ALL en_US.UTF-8
 ENV LC_CTYPE en_US.UTF-8
 ENV LC_MESSAGES en_US.UTF-8
 
-RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
-  && curl https://packages.microsoft.com/config/debian/9/prod.list > /etc/apt/sources.list.d/mssql-release.list \
-  && apt-get update \
-  && ACCEPT_EULA=Y apt-get -y install msodbcsql17 \
-  && ACCEPT_EULA=Y apt-get -y install mssql-tools
-
+# for bcp and sqlcmd for sql server
 ENV PATH="/opt/mssql-tools/bin:${PATH}"
 
 RUN apt-get update -yqq \
@@ -54,6 +49,7 @@ RUN apt-get update -yqq \
         libssl-dev \
         locales \
         netcat \
+        unixodbc-dev \
         python3-dev \
         python3-pip \
         python3-requests \
@@ -61,6 +57,10 @@ RUN apt-get update -yqq \
         software-properties-common \
         sudo \
         vim \
+    && curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
+    && curl https://packages.microsoft.com/config/debian/9/prod.list > /etc/apt/sources.list.d/mssql-release.list \
+    && apt-get update -y \
+    && ACCEPT_EULA=Y apt-get -y install msodbcsql17 \
     && sed -i 's/^# en_US.UTF-8 UTF-8$/en_US.UTF-8 UTF-8/g' /etc/locale.gen \
     && locale-gen \
     && update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 \
