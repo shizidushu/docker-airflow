@@ -80,6 +80,7 @@ RUN apt-get update -yqq \
     && pip install flask-bcrypt \
     && pip install pyodbc \
     && pip install pymssql \
+    && pip install unicodecsv \
     && pip install apache-airflow[crypto,celery,postgres,hive,jdbc,mysql,ssh${AIRFLOW_DEPS:+,}${AIRFLOW_DEPS}]==${AIRFLOW_VERSION} \
     && pip install 'celery[redis]>=4.1.1,<4.2.0' \
     && if [ -n "${PYTHON_DEPS}" ]; then pip install ${PYTHON_DEPS}; fi \
