@@ -64,7 +64,12 @@ RUN apt-get update -yqq \
     && sed -i 's/^# en_US.UTF-8 UTF-8$/en_US.UTF-8 UTF-8/g' /etc/locale.gen \
     && locale-gen \
     && update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 \
-    && useradd -ms /bin/bash -d ${AIRFLOW_HOME} airflow \
+    && groupadd --gid 119 docker \
+    && useradd --shell /bin/bash \
+        --create-home \
+        --home-dir ${AIRFLOW_HOME} \
+        airflow \
+    && usermod -aG docker airflow \
     && pip install -U pip setuptools wheel \
     && pip install pytz \
     && pip install pyOpenSSL \
@@ -94,7 +99,7 @@ COPY config/airflow.cfg ${AIRFLOW_HOME}/airflow.cfg
 
 EXPOSE 8080 5555 8793
 
-USER root
+USER airflow
 WORKDIR ${AIRFLOW_HOME}
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["webserver"] # set default arg for entrypoint
