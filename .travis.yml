@@ -8,5 +8,5 @@ jobs:
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
       - docker build --build-arg GITHUB_PAT=$GITHUB_ACCESS_TOKEN -t docker-airflow .
       - docker images
-      - docker tag docker-airflow $DOCKER_USERNAME/docker-airflow
-      - docker push $DOCKER_USERNAME/docker-airflow
+      - docker tag docker-airflow $DOCKER_USERNAME/docker-airflow:1.10.1b1
+      - docker push $DOCKER_USERNAME/docker-airflow:1.10.1b1
