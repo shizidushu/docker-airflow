@@ -92,16 +92,9 @@ RUN apt-get update -yqq \
 COPY script/entrypoint.sh /entrypoint.sh
 COPY config/airflow.cfg ${AIRFLOW_HOME}/airflow.cfg
 
-# Add user to the group docker
-## temporarily not specify groupid as: `groupadd --gid 119 docker`
-RUN groupadd docker \
-  && usermod -aG docker airflow
-
-RUN chown -R airflow: ${AIRFLOW_HOME}
-
 EXPOSE 8080 5555 8793
 
-USER airflow
+USER root
 WORKDIR ${AIRFLOW_HOME}
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["webserver"] # set default arg for entrypoint
