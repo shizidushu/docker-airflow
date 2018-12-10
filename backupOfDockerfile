@@ -1,4 +1,4 @@
-# VERSION 1.10.1
+# VERSION 1.10.0-5
 # AUTHOR: Matthieu "Puckel_" Roisil
 # DESCRIPTION: Basic Airflow container
 # BUILD: docker build --rm -t puckel/docker-airflow .
@@ -25,28 +25,42 @@ ENV LC_ALL en_US.UTF-8
 ENV LC_CTYPE en_US.UTF-8
 ENV LC_MESSAGES en_US.UTF-8
 
-RUN set -ex \
-    && buildDeps=' \
+# for bcp and sqlcmd for sql server
+ENV PATH="/opt/mssql-tools/bin:${PATH}"
+
+RUN apt-get update -yqq \
+    && apt-get upgrade -yqq \
+    && apt-get install -y \
+        apt-transport-https \
+        apt-utils \
+        build-essential \
+        curl \
+        default-libmysqlclient-dev \
+        freetds-bin \
         freetds-dev \
+        git \
+        libblas-dev \
+        libffi-dev \
         libkrb5-dev \
+        liblapack-dev \
+        libltdl7 \
+        libpq-dev \
         libsasl2-dev \
         libssl-dev \
-        libffi-dev \
-        libpq-dev \
-        git \
-    ' \
-    && apt-get update -yqq \
-    && apt-get upgrade -yqq \
-    && apt-get install -yqq --no-install-recommends \
-        $buildDeps \
-        freetds-bin \
-        build-essential \
-        default-libmysqlclient-dev \
-        apt-utils \
-        curl \
-        rsync \
-        netcat \
         locales \
+        netcat \
+        unixodbc-dev \
+        python3-dev \
+        python3-pip \
+        python3-requests \
+        rsync \
+        software-properties-common \
+        sudo \
+        vim \
+    && curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
+    && curl https://packages.microsoft.com/config/debian/9/prod.list > /etc/apt/sources.list.d/mssql-release.list \
+    && apt-get update -y \
+    && ACCEPT_EULA=Y apt-get -y install msodbcsql17 \
     && sed -i 's/^# en_US.UTF-8 UTF-8$/en_US.UTF-8 UTF-8/g' /etc/locale.gen \
     && locale-gen \
     && update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 \
@@ -64,6 +78,9 @@ RUN set -ex \
     && pip install docker \
     && pip install bcrypt \
     && pip install flask-bcrypt \
+    && pip install pyodbc \
+    && pip install pymssql \
+    && pip install unicodecsv \
     && pip install apache-airflow[crypto,celery,postgres,hive,jdbc,mysql,ssh${AIRFLOW_DEPS:+,}${AIRFLOW_DEPS}]==${AIRFLOW_VERSION} \
     && pip install 'redis>=2.10.5,<3' \
     && if [ -n "${PYTHON_DEPS}" ]; then pip install ${PYTHON_DEPS}; fi \
@@ -80,8 +97,6 @@ RUN set -ex \
 
 COPY script/entrypoint.sh /entrypoint.sh
 COPY config/airflow.cfg ${AIRFLOW_HOME}/airflow.cfg
-
-RUN chown -R airflow: ${AIRFLOW_HOME}
 
 EXPOSE 8080 5555 8793
 
