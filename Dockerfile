@@ -40,6 +40,7 @@ RUN set -ex \
     && apt-get install -yqq --no-install-recommends \
         $buildDeps \
         apt-transport-https \
+        freetds-dev \
         freetds-bin \
         build-essential \
         default-libmysqlclient-dev \
@@ -72,6 +73,7 @@ RUN set -ex \
     && pip install docker \
     && pip install bcrypt \
     && pip install flask-bcrypt \
+    && pip install pymssql \
     && pip install pyodbc \
     && pip install apache-airflow[crypto,celery,postgres,hive,jdbc,mysql,ssh${AIRFLOW_DEPS:+,}${AIRFLOW_DEPS}]==${AIRFLOW_VERSION} \
     && pip install 'redis>=2.10.5,<3' \
