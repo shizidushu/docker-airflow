@@ -75,6 +75,7 @@ RUN set -ex \
     && pip install flask-bcrypt \
     && pip install pymssql \
     && pip install pyodbc \
+    && pip install client \
     && pip install suds==0.4 \
     && pip install suds-jurko==0.6 \
     && pip install apache-airflow[crypto,celery,postgres,hive,jdbc,mysql,ssh${AIRFLOW_DEPS:+,}${AIRFLOW_DEPS}]==${AIRFLOW_VERSION} \
