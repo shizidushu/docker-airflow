@@ -164,6 +164,10 @@ RUN set -ex \
         libcurl4-openssl-dev \
         ## used to build openssl
         libssl-dev\
+        ## used to build udunits2
+        libudunits2-dev \
+        ## used to build redux
+        libhiredis-dev \
     && cd tmp/ \
     ## Download source code
     && curl -O https://cran.r-project.org/src/base/R-3/R-${R_VERSION}.tar.gz \
