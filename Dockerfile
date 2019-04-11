@@ -44,7 +44,6 @@ RUN set -ex \
         git \
         curl \
         # BUILDDEPS from https://github.com/rocker-org/rocker-versioned/blob/master/r-ver/Dockerfile
-        default-jdk \
         libbz2-dev \
         libcairo2-dev \
         libcurl4-openssl-dev \
@@ -113,7 +112,7 @@ RUN set -ex \
         unzip \
         zip \
         zlib1g \
-    ## install lib myself
+    ## install lib on python or sys side
     && apt-get install -y --no-install-recommends \
         apt-transport-https \
         libblas-dev \
@@ -122,6 +121,38 @@ RUN set -ex \
         unixodbc-dev \
         python3-requests \
         software-properties-common \
+    ## install lib on r side
+    && apt-get install -y --no-install-recommends \
+        ## for rJava
+        default-jdk \
+        ## Nice Google fonts
+        fonts-roboto \
+        ## used by some base R plots
+        ghostscript \
+        ## used to build rJava and other packages
+        libbz2-dev \
+        libicu-dev \
+        liblzma-dev \
+        ## system dependency of hunspell (devtools)
+        libhunspell-dev \
+        ## system dependency of hadley/pkgdown
+        libmagick++-dev \
+        ## rdf, for redland / linked data
+        librdf0-dev \
+        ## for V8-based javascript wrappers
+        libv8-dev \
+        ## R CMD Check wants qpdf to check pdf sizes, or throws a Warning
+        qpdf \
+        ## For building PDF manuals
+        texinfo \
+        ## for git via ssh key
+        ssh \
+        ## just because
+        less \
+        vim \
+        ## parallelization
+        libzmq3-dev \
+        libopenmpi-dev \
     && cd tmp/ \
     ## Download source code
     && curl -O https://cran.r-project.org/src/base/R-3/R-${R_VERSION}.tar.gz \
