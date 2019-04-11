@@ -83,6 +83,54 @@ RUN set -ex \
         netcat \
         locales \
         unixodbc-dev \
+        bash-completion \
+        bzip2 \
+        ca-certificates \
+        cargo \
+        cron \
+        curl \
+        default-jdk \
+        dirmngr \
+        file \
+        fonts-texgyre \
+        fonts-wqy-zenhei \
+        g++ \
+        gdebi-core \
+        gfortran \
+        git \
+        gnupg \
+        gsfonts \
+        libblas-dev \
+        libbz2-1.0 \
+        libcurl3 \
+        libcurl4-gnutls-dev \
+        libgconf-2-4 \
+        libgdal-dev \
+        libgeos-dev \
+        libgit2-dev \
+        libgl1-mesa-dev  \
+        libglu1-mesa-dev \
+        libhiredis-dev \
+        libicu57 \
+        libjpeg62-turbo \
+        libjq-dev \
+        liblzma5 \
+        libmagick++-dev \
+        libopenblas-dev \
+        libpangocairo-1.0-0 \
+        libpcre3 \
+        libpng16-16 \
+        libpq-dev \
+        libproj-dev \
+        libprotobuf-dev \
+        libreadline7 \
+        libsqliteodbc \
+        libssh2-1-dev \
+        libssl-dev \
+        libtiff5 \
+        libudunits2-dev \
+        libv8-dev \
+        libxi6 \
         make \
         odbc-postgresql \
         pandoc \
@@ -97,6 +145,7 @@ RUN set -ex \
         xtail \
         zip \
         zlib1g \
+    && dpkg --get-selections | grep hold \
     && cd tmp/ \
     ## Download source code
     && curl -O https://cran.r-project.org/src/base/R-3/R-${R_VERSION}.tar.gz \
