@@ -38,7 +38,6 @@ RUN set -ex \
         freetds-dev \
         libkrb5-dev \
         libsasl2-dev \
-        libssl-dev \
         libffi-dev \
         libpq-dev \
         git \
@@ -46,7 +45,6 @@ RUN set -ex \
         # BUILDDEPS from https://github.com/rocker-org/rocker-versioned/blob/master/r-ver/Dockerfile
         libbz2-dev \
         libcairo2-dev \
-        libcurl4-openssl-dev \
         libpango1.0-dev \
         libjpeg-dev \
         libicu-dev \
@@ -155,11 +153,12 @@ RUN set -ex \
         software-properties-common \
     ## install lib on r side
     && apt-get install -y --no-install-recommends \
-        libxml2-dev \
         libsqlite3-dev \
         libmariadbd-dev \
         libmariadb-client-lgpl-dev \
         libssh2-1-dev \
+        ## used to build xml2
+        libxml2-dev \
         ## used to build curl
         libcurl4-openssl-dev \
         ## used to build openssl
