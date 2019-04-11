@@ -102,6 +102,20 @@ RUN set -ex \
         gsfonts \
         libblas-dev \
         libbz2-1.0 \
+        libcurl3 \
+        libcurl4-gnutls-dev \
+        libgconf-2-4 \
+        libgdal-dev \
+        libgeos-dev \
+        libgit2-dev \
+        libgl1-mesa-dev  \
+        libglu1-mesa-dev \
+        libhiredis-dev \
+        libicu57 \
+        libjpeg62-turbo \
+        libjq-dev \
+        liblzma5 \
+        libmagick++-dev \
         make \
         odbc-postgresql \
         pandoc \
