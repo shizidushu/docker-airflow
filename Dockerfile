@@ -32,7 +32,37 @@ ENV TERM xterm
 ENV JULIA_PATH /usr/local/julia
 ENV PATH $JULIA_PATH/bin:$PATH
 
-RUN set -ex \
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        bash-completion \
+        ca-certificates \
+        file \
+        fonts-texgyre \
+        g++ \
+        gfortran \
+        gsfonts \
+        libblas-dev \
+        libbz2-1.0 \
+        libcurl3 \
+        libicu57 \
+        libjpeg62-turbo \
+        libopenblas-dev \
+        libpangocairo-1.0-0 \
+        libpcre3 \
+        libpng16-16 \
+        libreadline7 \
+        libtiff5 \
+        liblzma5 \
+        locales \
+        make \
+        unzip \
+        zip \
+        zlib1g \
+    && && sed -i 's/^# en_US.UTF-8 UTF-8$/en_US.UTF-8 UTF-8/g' /etc/locale.gen \
+    && locale-gen \
+    && update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 \
+    && set -ex \
     && buildDeps=' \
         freetds-dev \
         libkrb5-dev \
@@ -81,28 +111,16 @@ RUN set -ex \
         gnupg2 \
         rsync \
         netcat \
-        locales \
         unixodbc-dev \
-        bash-completion \
         bzip2 \
-        ca-certificates \
         cargo \
         cron \
-        curl \
         default-jdk \
         dirmngr \
-        file \
-        fonts-texgyre \
         fonts-wqy-zenhei \
-        g++ \
         gdebi-core \
-        gfortran \
         git \
         gnupg \
-        gsfonts \
-        libblas-dev \
-        libbz2-1.0 \
-        libcurl3 \
         libcurl4-gnutls-dev \
         libgconf-2-4 \
         libgdal-dev \
@@ -111,12 +129,17 @@ RUN set -ex \
         libgl1-mesa-dev  \
         libglu1-mesa-dev \
         libhiredis-dev \
-        libicu57 \
-        libjpeg62-turbo \
         libjq-dev \
-        liblzma5 \
         libmagick++-dev \
-        make \
+        libpq-dev \
+        libproj-dev \
+        libprotobuf-dev \
+        libsqliteodbc \
+        libssh2-1-dev \
+        libssl-dev \
+        libudunits2-dev \
+        libv8-dev \
+        libxi6 \
         odbc-postgresql \
         pandoc \
         pandoc-citeproc \
@@ -125,11 +148,8 @@ RUN set -ex \
         sudo \
         tdsodbc \
         unixodbc \
-        unzip \
         wget \
         xtail \
-        zip \
-        zlib1g \
     && cd tmp/ \
     ## Download source code
     && curl -O https://cran.r-project.org/src/base/R-3/R-${R_VERSION}.tar.gz \
@@ -192,9 +212,6 @@ RUN set -ex \
     && apt-get update \
     && ACCEPT_EULA=Y apt-get -y install msodbcsql17 \
     && ACCEPT_EULA=Y apt-get -y install mssql-tools \
-    && sed -i 's/^# en_US.UTF-8 UTF-8$/en_US.UTF-8 UTF-8/g' /etc/locale.gen \
-    && locale-gen \
-    && update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 \
     && groupadd --gid 119 docker \
     && useradd --shell /bin/bash \
         --create-home \
