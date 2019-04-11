@@ -112,16 +112,7 @@ RUN set -ex \
         unzip \
         zip \
         zlib1g \
-    ## install lib on python or sys side
-    && apt-get install -y --no-install-recommends \
-        apt-transport-https \
-        libblas-dev \
-        liblapack-dev \
-        libltdl7 \
-        unixodbc-dev \
-        python3-requests \
-        software-properties-common \
-    ## install lib on r side
+    ## script from https://github.com/rocker-org/rocker-versioned/blob/master/verse/Dockerfile
     && apt-get install -y --no-install-recommends \
         ## for rJava
         default-jdk \
@@ -153,6 +144,22 @@ RUN set -ex \
         ## parallelization
         libzmq3-dev \
         libopenmpi-dev \
+    ## install lib on python or sys side
+    && apt-get install -y --no-install-recommends \
+        apt-transport-https \
+        libblas-dev \
+        liblapack-dev \
+        libltdl7 \
+        unixodbc-dev \
+        python3-requests \
+        software-properties-common \
+    ## install lib on r side
+    && apt-get install -y --no-install-recommends \
+        libxml2-dev \
+        libsqlite3-dev \
+        libmariadbd-dev \
+        libmariadb-client-lgpl-dev \
+        libssh2-1-dev \
     && cd tmp/ \
     ## Download source code
     && curl -O https://cran.r-project.org/src/base/R-3/R-${R_VERSION}.tar.gz \
