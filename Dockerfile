@@ -84,9 +84,9 @@ RUN set -ex \
         rsync \
         netcat \
         locales \
-    && echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen \
-    && locale-gen en_US.utf8 \
-    && /usr/sbin/update-locale LANG=en_US.UTF-8 \
+    && sed -i 's/^# en_US.UTF-8 UTF-8$/en_US.UTF-8 UTF-8/g' /etc/locale.gen \
+    && locale-gen \
+    && update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 \
     # install script from https://github.com/rocker-org/rocker-versioned/blob/master/r-ver/Dockerfile
     && apt-get install -y --no-install-recommends \
         bash-completion \
@@ -113,6 +113,15 @@ RUN set -ex \
         unzip \
         zip \
         zlib1g \
+    ## install lib myself
+    && apt-get install -y --no-install-recommends \
+        apt-transport-https \
+        libblas-dev \
+        liblapack-dev \
+        libltdl7 \
+        unixodbc-dev \
+        python3-requests \
+        software-properties-common \
     && cd tmp/ \
     ## Download source code
     && curl -O https://cran.r-project.org/src/base/R-3/R-${R_VERSION}.tar.gz \
