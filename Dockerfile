@@ -145,7 +145,7 @@ RUN set -ex \
         xtail \
         zip \
         zlib1g \
-    && dpkg --get-selections | grep hold \
+    && dpkg --get-selections | grep hold | echo \
     && cd tmp/ \
     ## Download source code
     && curl -O https://cran.r-project.org/src/base/R-3/R-${R_VERSION}.tar.gz \
