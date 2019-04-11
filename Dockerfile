@@ -160,6 +160,10 @@ RUN set -ex \
         libmariadbd-dev \
         libmariadb-client-lgpl-dev \
         libssh2-1-dev \
+        ## used to build curl
+        libcurl4-openssl-dev \
+        ## used to build openssl
+        libssl-dev\
     && cd tmp/ \
     ## Download source code
     && curl -O https://cran.r-project.org/src/base/R-3/R-${R_VERSION}.tar.gz \
