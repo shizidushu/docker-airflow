@@ -35,11 +35,6 @@ ENV PATH="/opt/mssql-tools/bin:${PATH}"
 
 RUN set -ex \
     && buildDeps=' \
-        freetds-dev \
-        libkrb5-dev \
-        libsasl2-dev \
-        libffi-dev \
-        libpq-dev \
         # buildDeps from https://github.com/rocker-org/rocker-versioned/blob/master/r-ver/Dockerfile
         libbz2-dev \
         libcairo2-dev \
@@ -78,7 +73,6 @@ RUN set -ex \
         netcat \
         locales \
         git \
-        curl \
     && sed -i 's/^# en_US.UTF-8 UTF-8$/en_US.UTF-8 UTF-8/g' /etc/locale.gen \
     && locale-gen \
     && update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 \
@@ -111,13 +105,21 @@ RUN set -ex \
     ## install lib on python or sys side
     && apt-get install -y --no-install-recommends \
         apt-transport-https \
-        libblas-dev \
+        freetds-dev \
+        libffi-dev \
+        libkrb5-dev \
         liblapack-dev \
         libltdl7 \
-        unixodbc-dev \
+        libpq-dev \
+        libsasl2-dev \
+        libssl-dev \
+        python3-dev \
+        python3-pip \
         python3-requests \
         software-properties-common \
-
+        sudo \
+        unixodbc-dev \
+        vim \
     && cd tmp/ \
     ## Download source code
     && curl -O https://cran.r-project.org/src/base/R-3/R-${R_VERSION}.tar.gz \
