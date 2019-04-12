@@ -209,7 +209,6 @@ RUN set -ex \
     && if [ -n "${PYTHON_DEPS}" ]; then pip install ${PYTHON_DEPS}; fi \
     ## Clean up from R source install
     && cd / \
-    && rm -rf /tmp/* \
     && apt-get remove --purge -y $buildDeps \
     && apt-get autoremove -y \
     && apt-get autoclean -y \
