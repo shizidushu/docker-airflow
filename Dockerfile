@@ -108,7 +108,6 @@ RUN set -ex \
         unzip \
         zip \
         zlib1g \
-
     ## install lib on python or sys side
     && apt-get install -y --no-install-recommends \
         apt-transport-https \
@@ -220,67 +219,6 @@ RUN set -ex \
         /usr/share/doc \
         /usr/share/doc-base
 
-RUN apt-get update \
-    ## script from https://github.com/rocker-org/rocker-versioned/blob/master/verse/Dockerfile
-    && apt-get install -y --no-install-recommends \
-        ## for rJava
-        default-jdk \
-        ## Nice Google fonts
-        fonts-roboto \
-        ## used by some base R plots
-        ghostscript \
-        ## used to build rJava and other packages
-        libbz2-dev \
-        libicu-dev \
-        liblzma-dev \
-        ## system dependency of hunspell (devtools)
-        libhunspell-dev \
-        ## system dependency of hadley/pkgdown
-        libmagick++-dev \
-        ## rdf, for redland / linked data
-        librdf0-dev \
-        ## for V8-based javascript wrappers
-        libv8-dev \
-        ## R CMD Check wants qpdf to check pdf sizes, or throws a Warning
-        qpdf \
-        ## For building PDF manuals
-        texinfo \
-        ## for git via ssh key
-        ssh \
-        ## just because
-        less \
-        vim \
-        ## parallelization
-        libzmq3-dev \
-        libopenmpi-dev \
-    ## install lib on r side
-    && apt-get install -y --no-install-recommends \
-        libsqlite3-dev \
-        libmariadbd-dev \
-        libmariadb-client-lgpl-dev \
-        libssh2-1-dev \
-        ## used to build xml2
-        libxml2-dev \
-        ## used to build curl
-        ### comment for conflict with libcurl4-gnutls-dev
-        ### libcurl4-openssl-dev \
-        ## used to build openssl
-        libssl-dev\
-        ## used to build udunits2
-        libudunits2-dev \
-        ## used to build redux
-        libhiredis-dev \
-        ## used to build git2r
-        libcurl4-gnutls-dev \
-        libgit2-dev \
-        zlib1g-dev \
-    && R CMD javareconf \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/
-
-RUN Rscript -e "if (!require(devtools)) install.packages('devtools')" \
-    && Rscript -e "devtools::source_url('https://raw.githubusercontent.com/shizidushu/common-pkg-list/master/r-pkgs.R')" \
-    && rm -rf /tmp/Rtmp*
 
 COPY script/entrypoint.sh /entrypoint.sh
 COPY config/airflow.cfg ${AIRFLOW_HOME}/airflow.cfg
