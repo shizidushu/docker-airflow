@@ -40,8 +40,6 @@ RUN set -ex \
         libsasl2-dev \
         libffi-dev \
         libpq-dev \
-        git \
-        curl \
         # BUILDDEPS from https://github.com/rocker-org/rocker-versioned/blob/master/r-ver/Dockerfile
         libbz2-dev \
         libcairo2-dev \
@@ -66,7 +64,6 @@ RUN set -ex \
         xauth \
         xfonts-base \
         xvfb \
-        zlib1g-dev \
     ' \
     && apt-get update -yqq \
     && apt-get upgrade -yqq \
@@ -80,6 +77,8 @@ RUN set -ex \
         rsync \
         netcat \
         locales \
+        git \
+        curl \
     && sed -i 's/^# en_US.UTF-8 UTF-8$/en_US.UTF-8 UTF-8/g' /etc/locale.gen \
     && locale-gen \
     && update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 \
