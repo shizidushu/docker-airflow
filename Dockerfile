@@ -168,6 +168,7 @@ RUN set -ex \
         ## used to build redux
         libhiredis-dev \
         ## used to build git2r
+        libcurl4-gnutls-dev \
         libgit2-dev \
         zlib1g-dev \
     && cd tmp/ \
