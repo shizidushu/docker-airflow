@@ -167,6 +167,9 @@ RUN set -ex \
         libudunits2-dev \
         ## used to build redux
         libhiredis-dev \
+        ## used to build git2r
+        libgit2-dev \
+        zlib1g-dev \
     && cd tmp/ \
     ## Download source code
     && curl -O https://cran.r-project.org/src/base/R-3/R-${R_VERSION}.tar.gz \
