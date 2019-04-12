@@ -169,7 +169,6 @@ RUN set -ex \
     && ln -s /usr/local/lib/R/site-library/littler/examples/install2.r /usr/local/bin/install2.r \
     && ln -s /usr/local/lib/R/site-library/littler/examples/installGithub.r /usr/local/bin/installGithub.r \
     && ln -s /usr/local/lib/R/site-library/littler/bin/r /usr/local/bin/r \
-    && R CMD javareconf \
     && curl -fL -o julia.tar.gz "https://julialang-s3.julialang.org/bin/linux/x64/1.1/julia-1.1.0-linux-x86_64.tar.gz" \
     && mkdir "$JULIA_PATH" \
     && tar -xzf julia.tar.gz -C "$JULIA_PATH" --strip-components 1 \
@@ -275,6 +274,7 @@ RUN apt-get update \
         libcurl4-gnutls-dev \
         libgit2-dev \
         zlib1g-dev \
+    && R CMD javareconf \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/
 
