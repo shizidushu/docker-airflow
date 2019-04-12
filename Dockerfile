@@ -31,7 +31,7 @@ ENV R_VERSION ${R_VERSION:-3.5.3}
 ENV TERM xterm
 ENV JULIA_PATH /usr/local/julia
 ENV PATH $JULIA_PATH/bin:$PATH
-
+ENV PATH="/opt/mssql-tools/bin:${PATH}"
 
 RUN set -ex \
     && buildDeps=' \
@@ -40,7 +40,7 @@ RUN set -ex \
         libsasl2-dev \
         libffi-dev \
         libpq-dev \
-        # BUILDDEPS from https://github.com/rocker-org/rocker-versioned/blob/master/r-ver/Dockerfile
+        # buildDeps from https://github.com/rocker-org/rocker-versioned/blob/master/r-ver/Dockerfile
         libbz2-dev \
         libcairo2-dev \
         libpango1.0-dev \
@@ -108,38 +108,7 @@ RUN set -ex \
         unzip \
         zip \
         zlib1g \
-    ## script from https://github.com/rocker-org/rocker-versioned/blob/master/verse/Dockerfile
-    && apt-get install -y --no-install-recommends \
-        ## for rJava
-        default-jdk \
-        ## Nice Google fonts
-        fonts-roboto \
-        ## used by some base R plots
-        ghostscript \
-        ## used to build rJava and other packages
-        libbz2-dev \
-        libicu-dev \
-        liblzma-dev \
-        ## system dependency of hunspell (devtools)
-        libhunspell-dev \
-        ## system dependency of hadley/pkgdown
-        libmagick++-dev \
-        ## rdf, for redland / linked data
-        librdf0-dev \
-        ## for V8-based javascript wrappers
-        libv8-dev \
-        ## R CMD Check wants qpdf to check pdf sizes, or throws a Warning
-        qpdf \
-        ## For building PDF manuals
-        texinfo \
-        ## for git via ssh key
-        ssh \
-        ## just because
-        less \
-        vim \
-        ## parallelization
-        libzmq3-dev \
-        libopenmpi-dev \
+
     ## install lib on python or sys side
     && apt-get install -y --no-install-recommends \
         apt-transport-https \
@@ -149,27 +118,7 @@ RUN set -ex \
         unixodbc-dev \
         python3-requests \
         software-properties-common \
-    ## install lib on r side
-    && apt-get install -y --no-install-recommends \
-        libsqlite3-dev \
-        libmariadbd-dev \
-        libmariadb-client-lgpl-dev \
-        libssh2-1-dev \
-        ## used to build xml2
-        libxml2-dev \
-        ## used to build curl
-        ### comment for conflict with libcurl4-gnutls-dev
-        ### libcurl4-openssl-dev \
-        ## used to build openssl
-        libssl-dev\
-        ## used to build udunits2
-        libudunits2-dev \
-        ## used to build redux
-        libhiredis-dev \
-        ## used to build git2r
-        libcurl4-gnutls-dev \
-        libgit2-dev \
-        zlib1g-dev \
+
     && cd tmp/ \
     ## Download source code
     && curl -O https://cran.r-project.org/src/base/R-3/R-${R_VERSION}.tar.gz \
@@ -261,9 +210,9 @@ RUN set -ex \
     ## Clean up from R source install
     && cd / \
     && rm -rf /tmp/* \
-    && apt-get purge --auto-remove -yqq $buildDeps \
-    && apt-get autoremove -yqq --purge \
-    && apt-get clean \
+    && apt-get remove --purge -y $buildDeps \
+    && apt-get autoremove -y \
+    && apt-get autoclean -y \
     && rm -rf \
         /var/lib/apt/lists/* \
         /tmp/* \
@@ -272,7 +221,62 @@ RUN set -ex \
         /usr/share/doc \
         /usr/share/doc-base
 
-ENV PATH="/opt/mssql-tools/bin:${PATH}"
+RUN apt-get update \
+    ## script from https://github.com/rocker-org/rocker-versioned/blob/master/verse/Dockerfile
+    && apt-get install -y --no-install-recommends \
+        ## for rJava
+        default-jdk \
+        ## Nice Google fonts
+        fonts-roboto \
+        ## used by some base R plots
+        ghostscript \
+        ## used to build rJava and other packages
+        libbz2-dev \
+        libicu-dev \
+        liblzma-dev \
+        ## system dependency of hunspell (devtools)
+        libhunspell-dev \
+        ## system dependency of hadley/pkgdown
+        libmagick++-dev \
+        ## rdf, for redland / linked data
+        librdf0-dev \
+        ## for V8-based javascript wrappers
+        libv8-dev \
+        ## R CMD Check wants qpdf to check pdf sizes, or throws a Warning
+        qpdf \
+        ## For building PDF manuals
+        texinfo \
+        ## for git via ssh key
+        ssh \
+        ## just because
+        less \
+        vim \
+        ## parallelization
+        libzmq3-dev \
+        libopenmpi-dev \
+    ## install lib on r side
+    && apt-get install -y --no-install-recommends \
+        libsqlite3-dev \
+        libmariadbd-dev \
+        libmariadb-client-lgpl-dev \
+        libssh2-1-dev \
+        ## used to build xml2
+        libxml2-dev \
+        ## used to build curl
+        ### comment for conflict with libcurl4-gnutls-dev
+        ### libcurl4-openssl-dev \
+        ## used to build openssl
+        libssl-dev\
+        ## used to build udunits2
+        libudunits2-dev \
+        ## used to build redux
+        libhiredis-dev \
+        ## used to build git2r
+        libcurl4-gnutls-dev \
+        libgit2-dev \
+        zlib1g-dev \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/
 
 RUN Rscript -e "if (!require(devtools)) install.packages('devtools')" \
     && Rscript -e "devtools::source_url('https://raw.githubusercontent.com/shizidushu/common-pkg-list/master/r-pkgs.R')" \
