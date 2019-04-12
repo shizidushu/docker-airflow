@@ -11,4 +11,4 @@ jobs:
       - docker tag docker-airflow $DOCKER_USERNAME/docker-airflow:1.10.2
       - docker push $DOCKER_USERNAME/docker-airflow:1.10.2
       - docker tag docker-airflow $DOCKER_USERNAME/docker-airflow:latest
-      - docker push $DOCKER_USERNAME/docker-airflow:1.10.2:latest
+      - docker push $DOCKER_USERNAME/docker-airflow:latest
