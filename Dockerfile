@@ -58,7 +58,6 @@ RUN set -ex \
         perl \
         tcl8.6-dev \
         tk8.6-dev \
-        texinfo \
         texlive-extra-utils \
         texlive-fonts-recommended \
         texlive-fonts-extra \
@@ -160,7 +159,8 @@ RUN set -ex \
         ## used to build xml2
         libxml2-dev \
         ## used to build curl
-        libcurl4-openssl-dev \
+        ### comment for conflict with libcurl4-gnutls-dev
+        ### libcurl4-openssl-dev \
         ## used to build openssl
         libssl-dev\
         ## used to build udunits2
