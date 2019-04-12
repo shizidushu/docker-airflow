@@ -31,18 +31,13 @@ ENV R_VERSION ${R_VERSION:-3.5.3}
 ENV TERM xterm
 ENV JULIA_PATH /usr/local/julia
 ENV PATH $JULIA_PATH/bin:$PATH
+ENV PATH="/opt/mssql-tools/bin:${PATH}"
 
 RUN set -ex \
     && buildDeps=' \
-        freetds-dev \
-        libkrb5-dev \
-        libsasl2-dev \
-        libssl-dev \
-        libffi-dev \
-        libpq-dev \
+        # buildDeps from https://github.com/rocker-org/rocker-versioned/blob/master/r-ver/Dockerfile
         libbz2-dev \
         libcairo2-dev \
-        libcurl4-openssl-dev \
         libpango1.0-dev \
         libjpeg-dev \
         libicu-dev \
@@ -56,7 +51,6 @@ RUN set -ex \
         perl \
         tcl8.6-dev \
         tk8.6-dev \
-        texinfo \
         texlive-extra-utils \
         texlive-fonts-recommended \
         texlive-fonts-extra \
@@ -65,86 +59,67 @@ RUN set -ex \
         xauth \
         xfonts-base \
         xvfb \
-        zlib1g-dev \
     ' \
     && apt-get update -yqq \
     && apt-get upgrade -yqq \
     && apt-get install -yqq --no-install-recommends \
         $buildDeps \
-        apt-transport-https \
-        freetds-dev \
         freetds-bin \
         build-essential \
         default-libmysqlclient-dev \
         apt-utils \
         curl \
-        gnupg2 \
         rsync \
         netcat \
         locales \
-        unixodbc-dev \
+        git \
+    && sed -i 's/^# en_US.UTF-8 UTF-8$/en_US.UTF-8 UTF-8/g' /etc/locale.gen \
+    && locale-gen \
+    && update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 \
+    # install script from https://github.com/rocker-org/rocker-versioned/blob/master/r-ver/Dockerfile
+    && apt-get install -y --no-install-recommends \
         bash-completion \
-        bzip2 \
         ca-certificates \
-        cargo \
-        cron \
-        curl \
-        default-jdk \
-        dirmngr \
         file \
         fonts-texgyre \
-        fonts-wqy-zenhei \
         g++ \
-        gdebi-core \
         gfortran \
-        git \
-        gnupg \
         gsfonts \
         libblas-dev \
         libbz2-1.0 \
         libcurl3 \
-        libcurl4-gnutls-dev \
-        libgconf-2-4 \
-        libgdal-dev \
-        libgeos-dev \
-        libgit2-dev \
-        libgl1-mesa-dev  \
-        libglu1-mesa-dev \
-        libhiredis-dev \
         libicu57 \
         libjpeg62-turbo \
-        libjq-dev \
-        liblzma5 \
-        libmagick++-dev \
         libopenblas-dev \
         libpangocairo-1.0-0 \
         libpcre3 \
         libpng16-16 \
-        libpq-dev \
-        libproj-dev \
-        libprotobuf-dev \
         libreadline7 \
-        libsqliteodbc \
-        libssh2-1-dev \
-        libssl-dev \
         libtiff5 \
-        libudunits2-dev \
-        libv8-dev \
-        libxi6 \
+        liblzma5 \
+        locales \
         make \
-        odbc-postgresql \
-        pandoc \
-        pandoc-citeproc \
-        protobuf-compiler \
-        software-properties-common \
-        sudo \
-        tdsodbc \
-        unixodbc \
         unzip \
-        wget \
-        xtail \
         zip \
         zlib1g \
+    ## install lib on python or sys side
+    && apt-get install -y --no-install-recommends \
+        apt-transport-https \
+        freetds-dev \
+        libffi-dev \
+        libkrb5-dev \
+        liblapack-dev \
+        libltdl7 \
+        libpq-dev \
+        libsasl2-dev \
+        libssl-dev \
+        python3-dev \
+        python3-pip \
+        python3-requests \
+        software-properties-common \
+        sudo \
+        unixodbc-dev \
+        vim \
     && cd tmp/ \
     ## Download source code
     && curl -O https://cran.r-project.org/src/base/R-3/R-${R_VERSION}.tar.gz \
@@ -195,7 +170,6 @@ RUN set -ex \
     && ln -s /usr/local/lib/R/site-library/littler/examples/install2.r /usr/local/bin/install2.r \
     && ln -s /usr/local/lib/R/site-library/littler/examples/installGithub.r /usr/local/bin/installGithub.r \
     && ln -s /usr/local/lib/R/site-library/littler/bin/r /usr/local/bin/r \
-    && R CMD javareconf \
     && curl -fL -o julia.tar.gz "https://julialang-s3.julialang.org/bin/linux/x64/1.1/julia-1.1.0-linux-x86_64.tar.gz" \
     && mkdir "$JULIA_PATH" \
     && tar -xzf julia.tar.gz -C "$JULIA_PATH" --strip-components 1 \
@@ -207,9 +181,6 @@ RUN set -ex \
     && apt-get update \
     && ACCEPT_EULA=Y apt-get -y install msodbcsql17 \
     && ACCEPT_EULA=Y apt-get -y install mssql-tools \
-    && sed -i 's/^# en_US.UTF-8 UTF-8$/en_US.UTF-8 UTF-8/g' /etc/locale.gen \
-    && locale-gen \
-    && update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 \
     && groupadd --gid 119 docker \
     && useradd --shell /bin/bash \
         --create-home \
@@ -239,9 +210,9 @@ RUN set -ex \
     ## Clean up from R source install
     && cd / \
     && rm -rf /tmp/* \
-    && apt-get purge --auto-remove -yqq $buildDeps \
-    && apt-get autoremove -yqq --purge \
-    && apt-get clean \
+    && apt-get remove --purge -y $buildDeps \
+    && apt-get autoremove -y \
+    && apt-get autoclean -y \
     && rm -rf \
         /var/lib/apt/lists/* \
         /tmp/* \
@@ -250,11 +221,6 @@ RUN set -ex \
         /usr/share/doc \
         /usr/share/doc-base
 
-ENV PATH="/opt/mssql-tools/bin:${PATH}"
-
-RUN Rscript -e "if (!require(devtools)) install.packages('devtools')" \
-    && Rscript -e "devtools::source_url('https://raw.githubusercontent.com/shizidushu/common-pkg-list/master/r-pkgs.R')" \
-    && rm -rf /tmp/Rtmp*
 
 COPY script/entrypoint.sh /entrypoint.sh
 COPY config/airflow.cfg ${AIRFLOW_HOME}/airflow.cfg
