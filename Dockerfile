@@ -1,4 +1,4 @@
-# VERSION 1.10.2
+# VERSION 1.10.3
 # AUTHOR: Matthieu "Puckel_" Roisil
 # DESCRIPTION: Basic Airflow container
 # BUILD: docker build --rm -t puckel/docker-airflow .
@@ -12,11 +12,12 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV TERM linux
 
 # Airflow
-ARG AIRFLOW_VERSION=1.10.2
-ARG AIRFLOW_HOME=/usr/local/airflow
+ARG AIRFLOW_VERSION=1.10.3
+ARG AIRFLOW_USER_HOME=/usr/local/airflow
 ARG AIRFLOW_DEPS=""
 ARG PYTHON_DEPS=""
-ENV AIRFLOW_GPL_UNIDECODE yes
+ENV AIRFLOW_HOME=${AIRFLOW_USER_HOME}
+
 ARG R_VERSION
 ARG BUILD_DATE
 
@@ -184,7 +185,7 @@ RUN set -ex \
     && groupadd --gid 119 docker \
     && useradd --shell /bin/bash \
         --create-home \
-        --home-dir ${AIRFLOW_HOME} \
+        --home-dir ${AIRFLOW_USER_HOME} \
         airflow \
     && usermod -aG docker airflow \
     && pip install -U pip setuptools wheel \
@@ -205,7 +206,7 @@ RUN set -ex \
     && pip install suds==0.4 \
     && pip install suds-jurko==0.6 \
     && pip install apache-airflow[crypto,celery,postgres,hive,jdbc,mysql,ssh${AIRFLOW_DEPS:+,}${AIRFLOW_DEPS}]==${AIRFLOW_VERSION} \
-    && pip install 'redis>=3.2.0' \
+    && pip install 'redis==3.2' \
     && if [ -n "${PYTHON_DEPS}" ]; then pip install ${PYTHON_DEPS}; fi \
     ## Clean up from R source install
     && cd / \
@@ -222,13 +223,13 @@ RUN set -ex \
 
 
 COPY script/entrypoint.sh /entrypoint.sh
-COPY config/airflow.cfg ${AIRFLOW_HOME}/airflow.cfg
+COPY config/airflow.cfg ${AIRFLOW_USER_HOME}/airflow.cfg
 
-RUN chown -R airflow: ${AIRFLOW_HOME}
+RUN chown -R airflow: ${AIRFLOW_USER_HOME}
 
 EXPOSE 8080 5555 8793
 
 USER airflow
-WORKDIR ${AIRFLOW_HOME}
+WORKDIR ${AIRFLOW_USER_HOME}
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["webserver"] # set default arg for entrypoint
